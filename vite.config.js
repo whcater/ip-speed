@@ -74,12 +74,12 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'IPCheck.ing',
-        short_name: 'IPCheck.ing',
+        name: 'IP-Speed.hatoolset.com',
+        short_name: 'IP-Speed',
         theme_color: '#f8f9fa',
         orientation: "portrait",
-        id: 'com.jasonng.myip',
-        description: 'All in one IP Toolbox',
+        id: 'com.hatoolset.ip-speed',
+        description: 'All in one IP Toolset',
         icons: [
           {
             src: '/logos/logo-192.webp',

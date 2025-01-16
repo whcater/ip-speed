@@ -7,13 +7,8 @@
 
         <a class="navbar-brand d-flex align-items-center align-content-center" :class="{ 'text-white': isDarkMode }"
           href="#" @click="handleLogoClick">
-          <brandIcon />
-          <span class=" fw-bold  "> IP</span>
-          <span class="fw-lighter">Check.</span>
-          <span class="fw-lighter" :class="{
-          'background-animation-dark': !loaded && isDarkMode,
-          'background-animation-light': !loaded && !isDarkMode
-        }">ing</span>
+          <brandIcon /> 
+          <span class="fw-lighter"> Speed</span> 
         </a>
 
         <div id="Preferences" class="preference-button" @click.prevent="OpenPreferences" role="button"
@@ -102,7 +97,7 @@ const OpenPreferences = () => {
 
 //获取 GitHub stars
 const getGitHubStars = async () => {
-  const url = `https://api.github.com/repos/jason5ng32/MyIP`;
+  const url = `https://api.github.com/repos/whcater/ip-speed`;
 
   try {
     const response = await fetch(url);
