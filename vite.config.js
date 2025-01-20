@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 import { CodeInspectorPlugin } from 'code-inspector-plugin';
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 dotenv.config();
 
@@ -106,6 +107,14 @@ export default defineConfig({
       behavior: {
         copy: '{file}',
       },
+    }),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'common/*',
+          dest: 'common'
+        }
+      ]
     }),
   ],
   resolve: {
