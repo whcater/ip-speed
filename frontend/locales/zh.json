@@ -500,7 +500,7 @@
   "page": {
     "title": "IP Speed - IP 地址和地理位置的速度测试 - 检查 WebRTC 连接 IP-DNS 泄漏测试 - Ping/MTR 测试",
     "description": "收集所有高度可用的 IP 地址工具。轻松检查您的 IP、IP 信息、检查 DNS 泄漏、检查 WebRTC 连接、测试网站可用性、查找 DNS 记录、查找 Whois 和测试来自世界各地的延迟",
-    "footerLink": "https://github.com/jason5ng32/MyIP",
+    "footerLink": "https://github.com/whcater/ip-speed",
     "copyRightName": "Originally from ",
     "copyRightLink": "https://ipcheck.ing",
     "copyRightLinkName": "IPCheck.ing"

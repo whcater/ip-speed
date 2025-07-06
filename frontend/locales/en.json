@@ -501,7 +501,7 @@
     "title": "IP Speed - Speed Test for IP Addresses and Geolocation - Checking WebRTC Connections IP-DNS Leak Test - Ping/MTR Test",
     "description": "Collect all highly available IP address tools. Easily check your IP, IP information, check DNS leaks, check WebRTC connections, test website availability, find DNS records, find Whois and test latency from around the world",
     "keywords": "IP Speed test,IP Tool,My IP,IP check,IP lookup,DNS leak test,WebRTC test,DNS lookup,Whois lookup, Ping test, privacy test",
-    "footerLink": "https://github.com/jason5ng32/MyIP",
+    "footerLink": "https://github.com/whcater/ip-speed",
     "copyRightName": "Originally from ",
     "copyRightLink": "https://ipcheck.ing",
     "copyRightLinkName": "IPCheck.ing"
