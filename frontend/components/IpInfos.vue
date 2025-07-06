@@ -50,7 +50,7 @@
             " class="card-body" :id="'IPInfo-' + (index + 1)">
             <ul class="list-group list-group-flush" v-if="card.country_name">
 
-              <img v-if="isMapShown" :src="isDarkMode ? card.mapUrl_dark : card.mapUrl"
+              <img v-if="isMapShown" :src="processMapUrl(isDarkMode ? card.mapUrl_dark : card.mapUrl)"
                 class="card-img-top jn-map-image" alt="Map">
 
               <li class="jn-list-group-item"
@@ -423,9 +423,26 @@ const fetchIPDetails = async (cardIndex, ip, sourceID = null) => {
     while (attempts < sources.length) {
       const source = sources[currentSourceIndex];
       try {
+        let data;
         const url = store.getDbUrl(source.id, ip, setLang);
-        const response = await fetch(url);
-        const data = await response.json();
+        
+        if (url) {
+          // 外部API（如IPAPI.co）使用传统方式
+          const response = await fetch(url);
+          data = await response.json();
+        } else {
+          // 内部API使用聚合API
+          const db = store.ipDBs.find(d => d.id === source.id);
+          if (db && db.eventName) {
+            data = await store.aggregateApiFetch(db.eventName, {
+              ip: ip,
+              lang: setLang
+            });
+          } else {
+            throw new Error('No eventName found for source ' + source.id);
+          }
+        }
+        
         const cardData = transformDataFromIPapi(data, source.id, t, lang.value);
 
         if (cardData) {
@@ -520,6 +537,18 @@ const refreshCard = (card, index) => {
 // 清空卡片数据
 const clearCardData = (card) => {
   Object.assign(card, createDefaultCard());
+};
+
+// 处理聚合API的map URL
+const processMapUrl = (url) => {
+  if (!url) return url;
+  
+  if (url.startsWith('aggregate:')) {
+    // 暂时返回默认图片，地图功能需要特殊处理
+    return isDarkMode.value ? '/res/defaultMap_dark.webp' : '/res/defaultMap.webp';
+  }
+  
+  return url;
 };
 
 // 复制 IP 地址

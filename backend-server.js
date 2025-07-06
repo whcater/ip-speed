@@ -3,26 +3,16 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import mapHandler from './api/map.js';
-import ipinfoHandler from './api/ipinfo.js';
-import ipapicomHandler from './api/ipapicom.js';
-import keycdnHandler from './api/keycdn.js';
-import ipCheckingHandler from './api/ipchecking.js';
-import ipsbHandler from './api/ipsb.js';
-import cfHander from './api/cfradar.js';
-import validateConfigs from './api/configs.js';
-import dnsResolver from './api/dnsresolver.js';
+import aggregateHandler from './api/agg.js';
 import rateLimit from 'express-rate-limit';
 import { slowDown } from 'express-slow-down'
-import whois from './api/whois.js';
-import ipapiisHandler from './api/ipapiis.js';
-import invisibilitytestHandler from './api/invisibilitytest.js';
-import macChecker from './api/macchecker.js';
-import maxmindHandler from './api/maxmind.js';
 
 dotenv.config();
 
 const app = express();
+
+// 解析 JSON 请求体
+app.use(express.json());
 const backEndPort = parseInt(process.env.BACKEND_PORT || 11966, 10);
 const blackListIPLogFilePath = process.env.SECURITY_BLACKLIST_LOG_FILE_PATH || 'logs/blacklist-ip.log';
 const rateLimitSet = parseInt(process.env.SECURITY_RATE_LIMIT || 0, 10);
@@ -125,23 +115,8 @@ if (speedLimitSet !== 0) {
 }
 
 
-// APIs
-app.get('/api/map', mapHandler);
-app.get('/api/ipinfo', ipinfoHandler);
-app.get('/api/ipapicom', ipapicomHandler);
-app.get('/api/keycdn', keycdnHandler);
-app.get('/api/ipchecking', ipCheckingHandler);
-app.get('/api/ipsb', ipsbHandler);
-app.get('/api/cfradar', cfHander);
-app.get('/api/dnsresolver', dnsResolver);
-// app.get('/api/whois', whois);
-// app.get('/api/ipapiis', ipapiisHandler);
-app.get('/api/invisibility', invisibilitytestHandler);
-// app.get('/api/macchecker', macChecker);
-app.get('/api/maxmind', maxmindHandler);
-
-// 使用查询参数处理所有配置请求
-app.get('/api/configs', validateConfigs);
+// 聚合API - 所有API请求都通过这个端点处理
+app.post('/api/agg', aggregateHandler);
 
 // 设置静态文件服务
 const __filename = fileURLToPath(import.meta.url);

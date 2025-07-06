@@ -147,11 +147,9 @@ const onSubmit = () => {
 const getWhoisResults = async (query) => {
     whoisCheckStatus.value = 'running';
     try {
-        const response = await fetch(`/api/whois?q=${query}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        const data = await store.aggregateApiFetch('/api/whois', {
+            q: query
+        });
         getProviders(data);
         if (type.value === 'domain' && providers.value.length >= 1) {
             whoisResults.value = data;

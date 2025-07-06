@@ -132,11 +132,10 @@ const getDNSResults = async (hostname, type) => {
     combinedResults.value = [];
     dnsCheckStatus.value = 'running';
     try {
-        const response = await fetch(`/api/dnsresolver?hostname=${hostname}&type=${type}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        const data = await store.aggregateApiFetch('/api/dnsresolver', {
+            hostname: hostname,
+            type: type
+        });
         processResults(data);
         dnsCheckStatus.value = 'idle';
         errorMsg.value = '';

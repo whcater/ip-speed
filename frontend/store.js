@@ -38,14 +38,14 @@ export const useMainStore = defineStore('main', {
       alertTitle: "",
     },
     ipDBs: [
-      { id: 0, text: 'IPCheck.ing', url: '/api/ipchecking?ip={{ip}}&lang={{lang}}', enabled: true },
-      { id: 1, text: 'IPinfo.io', url: '/api/ipinfo?ip={{ip}}', enabled: true },
-      { id: 2, text: 'IP-API.com', url: '/api/ipapicom?ip={{ip}}&lang={{lang}}', enabled: true },
+      { id: 0, text: 'IPCheck.ing', eventName: '/api/ipchecking', enabled: true },
+      { id: 1, text: 'IPinfo.io', eventName: '/api/ipinfo', enabled: true },
+      { id: 2, text: 'IP-API.com', eventName: '/api/ipapicom', enabled: true },
       { id: 3, text: 'IPAPI.co', url: 'https://ipapi.co/{{ip}}/json/', enabled: true },
-      { id: 4, text: 'KeyCDN', url: '/api/keycdn?ip={{ip}}', enabled: true },
-      { id: 5, text: 'IP.SB', url: '/api/ipsb?ip={{ip}}', enabled: true },
-      { id: 6, text: 'IPAPI.is', url: '/api/ipapiis?ip={{ip}}', enabled: true },
-      { id: 7, text: 'MaxMind', url: '/api/maxmind?ip={{ip}}&lang={{lang}}', enabled: true },
+      { id: 4, text: 'KeyCDN', eventName: '/api/keycdn', enabled: true },
+      { id: 5, text: 'IP.SB', eventName: '/api/ipsb', enabled: true },
+      { id: 6, text: 'IPAPI.is', eventName: '/api/ipapiis', enabled: true },
+      { id: 7, text: 'MaxMind', eventName: '/api/maxmind', enabled: true },
     ],
   }),
 
@@ -64,11 +64,40 @@ export const useMainStore = defineStore('main', {
     setCurrentPath(path, id) {
       this.currentPath = { path: path, id: id };
     },
-    // 获取数据库的URL
+    // 获取数据库的URL（保留外部API的原有方式）
     getDbUrl(id, ip, lang) {
       const db = this.ipDBs.find(d => d.id === id);
       if (!db) return null;
-      return db.url.replace('{{ip}}', ip).replace('{{lang}}', lang || 'en');
+      // 对于外部API（如IPAPI.co），保持原有的URL方式
+      if (db.url) {
+        return db.url.replace('{{ip}}', ip).replace('{{lang}}', lang || 'en');
+      }
+      // 对于内部API，返回null，将使用aggregateApiFetch方法
+      return null;
+    },
+    // 使用聚合API获取数据
+    async aggregateApiFetch(eventName, params = {}) {
+      try {
+        const response = await fetch('/api/agg', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            eventName,
+            ...params
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('Error in aggregateApiFetch:', error);
+        throw error;
+      }
     },
     // 从每个组件返回启动状态
     setMountingStatus(key, value) {
@@ -144,18 +173,13 @@ export const useMainStore = defineStore('main', {
       this.setPreferences(preferencesToStore);
     },
     // 从服务器获取配置
-    fetchConfigs() {
-      fetch('/api/configs')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          this.configs = data;
-        })
-        .catch(error => console.error('Fetching configs failed: ', error));
+    async fetchConfigs() {
+      try {
+        const data = await this.aggregateApiFetch('/api/configs');
+        this.configs = data;
+      } catch (error) {
+        console.error('Fetching configs failed: ', error);
+      }
     },
   }
 });
